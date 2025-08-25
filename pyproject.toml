@@ -1,0 +1,9 @@
+[project]
+name = "Raijin"
+version = "0.0.1"
+description = "Raijin creates binary objects for use in financial services computations"
+dependencies = [
+  "tornado",
+  "celery",
+  "redis"
+]

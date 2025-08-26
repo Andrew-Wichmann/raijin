@@ -1,15 +1,14 @@
+import logging
 import tornado
 
-class Raijin(tornado.web.Application):
-    pass
+logging.basicConfig(level=logging.INFO)
 
-
-class SubmitJobHandler(tornado.web.RequestHandler):
-    def post(self):
-        print('hello world')
-
+from app import Raijin
+from request_handlers import CheckJobHandler, SubmitJobHandler
 
 if __name__ == "__main__":
-    app = Raijin([(r"/", SubmitJobHandler)])
-    app.listen(8888)
+    port = 8888
+    logging.info(f"Starting app on http://localhost:{port}")
+    app = Raijin([(r"/submit_job", SubmitJobHandler), (r"/check_job", CheckJobHandler)])
+    app.listen(port)
     tornado.ioloop.IOLoop.current().start()

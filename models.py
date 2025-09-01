@@ -24,6 +24,7 @@ class Status(enum.Enum):
     NOT_FOUND = "NOT_FOUND"
     PENDING = "PENDING"
     COMPLETE = "COMPLETE"
+    FAILED = "FAILED"
 
 
 class Job(BaseModel):

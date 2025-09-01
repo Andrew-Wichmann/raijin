@@ -2,7 +2,7 @@ import tornado
 import logging
 import pydantic
 import uuid
-from concurrent.futures import ProcessPoolExecutor, Future
+from concurrent.futures import ThreadPoolExecutor, Future
 from models import (
     CheckJobResponse,
     SubmitJobRequest,
@@ -11,8 +11,6 @@ from models import (
     CheckJobRequest,
 )
 from app import Raijin
-
-executor = ProcessPoolExecutor()
 
 
 class SubmitJobHandler(tornado.web.RequestHandler):
@@ -27,14 +25,10 @@ class SubmitJobHandler(tornado.web.RequestHandler):
             self.write(ErrorResponse(error=str(e)).model_dump_json())
             return
         try:
-            fut: Future = executor.submit(
-                self.application.task_processor.add, req.x, req.y
-            )
-            job_id = str(uuid.uuid4())
-            self.application.jobs[job_id] = fut
+            job = self.application.task_processor.add(req.x, req.y)
             self.set_status(200)
             self.set_header("Content-Type", "application/json")
-            self.write(SubmitJobResponse(job_id=job_id).model_dump_json())
+            self.write(SubmitJobResponse(job_id=job.job_id).model_dump_json())
         except Exception as e:
             logging.exception("Exception in SubmitJobHandler")
             self.set_header("Content-Type", "application/json")
@@ -54,7 +48,7 @@ class CheckJobHandler(tornado.web.RequestHandler):
             self.write(ErrorResponse(error=str(e)).model_dump_json())
             return
         try:
-            job = self.application.check(req.job_id)
+            job = self.application.job_store.get_job(req.job_id)
             self.set_status(200)
             self.set_header("Content-Type", "application/json")
             self.write(CheckJobResponse(job=job).model_dump_json())

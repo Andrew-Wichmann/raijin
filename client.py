@@ -36,8 +36,8 @@ if __name__ == "__main__":
             print(resp)
             sys.exit(1)
         resp = CheckJobResponse.model_validate_json(resp.content)
-        if resp.status == Status.COMPLETE:
-            print(f"DONE! {req.x} + {req.y} = {resp.result}")
+        if resp.job.status == Status.COMPLETE:
+            print(f"DONE! {req.x} + {req.y} = {resp.job.result}")
             sys.exit(0)
     print("Time out after 30 seconds")
     sys.exit(1)

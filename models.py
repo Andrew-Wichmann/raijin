@@ -26,6 +26,13 @@ class Status(enum.Enum):
     COMPLETE = "COMPLETE"
 
 
-class CheckJobResponse(BaseModel):
+class Job(BaseModel):
+    job_id: str
     status: Status
-    result: Optional[int]
+    result: Optional[int] = None
+
+
+class CheckJobResponse(BaseModel):
+    job: Job
+    # status: Status
+    # result: Optional[int]

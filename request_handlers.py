@@ -54,10 +54,10 @@ class CheckJobHandler(tornado.web.RequestHandler):
             self.write(ErrorResponse(error=str(e)).model_dump_json())
             return
         try:
-            status, result = self.application.check(req.job_id)
+            job = self.application.check(req.job_id)
             self.set_status(200)
             self.set_header("Content-Type", "application/json")
-            self.write(CheckJobResponse(status=status, result=result).model_dump_json())
+            self.write(CheckJobResponse(job=job).model_dump_json())
         except Exception as e:
             logging.exception("Exception in CheckJobHandler")
             self.set_status(500)

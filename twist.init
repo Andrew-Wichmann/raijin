@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SESSION_NAME=$(basename "$PWD")
+tmux new-window -t $SESSION_NAME
+tmux send-keys -t $SESSION_NAME "source .venv/bin/activate" Enter
+tmux select-window -t "$SESSION_NAME:0"

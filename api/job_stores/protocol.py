@@ -1,5 +1,5 @@
 from typing import Protocol, Optional
-from models.models import Job, Status
+from models import Job, Status
 
 
 class JobStoreProtocol(Protocol):

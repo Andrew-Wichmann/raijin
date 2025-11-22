@@ -2,7 +2,7 @@ import sqlite3
 from typing import Optional
 from uuid import uuid4
 
-from models.models import Job, Status
+from models import Job, Status
 from api.config.job_stores.sqlite import SQLiteJobStoreConfig
 
 

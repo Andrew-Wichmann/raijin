@@ -1,7 +1,7 @@
 import time
 from concurrent.futures import ProcessPoolExecutor, Future
 from api.job_stores import JobStoreProtocol
-from models.models import Status, Job
+from models import Status, Job
 import logging
 from api.config.task_processors.process_pool import ProcessPoolTaskProcessorConfig
 

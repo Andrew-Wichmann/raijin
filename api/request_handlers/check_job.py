@@ -1,7 +1,7 @@
 import tornado
 import logging
 import pydantic
-from models.models import (
+from models import (
     CheckJobResponse,
     ErrorResponse,
     CheckJobRequest,

@@ -1,5 +1,5 @@
 from typing import Dict, Optional
-from models.models import Job, Status
+from models import Job, Status
 from uuid import uuid4
 
 from api.config.job_stores.in_memory import InMemoryJobStoreConfig

@@ -26,3 +26,4 @@ class RaijinSettings(BaseSettings):
     job_store: JobStore = Field(
         default=JobStore.IN_MEMORY, description="The store type to store job data in"
     )
+    db_path: str = Field(default="db.sqlite", description="The SQLite database file")

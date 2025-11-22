@@ -5,7 +5,6 @@ import tornado
 from app import Raijin
 from settings import RaijinSettings
 from request_handlers import CheckJobHandler, SubmitJobHandler
-import settings
 
 parser = argparse.ArgumentParser(description="Raijin Web Application")
 parser.add_argument("--env_file", help="A custom env file to use")

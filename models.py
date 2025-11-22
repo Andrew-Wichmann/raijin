@@ -20,7 +20,7 @@ class CheckJobRequest(BaseModel):
     job_id: str
 
 
-class Status(enum.Enum):
+class Status(str, enum.Enum):
     NOT_FOUND = "NOT_FOUND"
     PENDING = "PENDING"
     COMPLETE = "COMPLETE"

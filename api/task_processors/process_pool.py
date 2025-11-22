@@ -1,11 +1,11 @@
 import time
 from concurrent.futures import ProcessPoolExecutor, Future
-from job_stores import JobStoreProtocol
-from models import Status, Job
+from api.job_stores import JobStoreProtocol
+from models.models import Status, Job
 import logging
+from api.config.task_processors.process_pool import ProcessPoolTaskProcessorConfig
 
 logger = logging.getLogger(__name__)
-executor = ProcessPoolExecutor()
 
 
 def _add(x: int, y: int) -> int:
@@ -14,9 +14,12 @@ def _add(x: int, y: int) -> int:
     return x + y
 
 
-class TaskProcessor:
-    def __init__(self, job_store: JobStoreProtocol):
+class ProcessPoolTaskProcessor:
+    def __init__(
+        self, job_store: JobStoreProtocol, config: ProcessPoolTaskProcessorConfig
+    ):
         self.job_store = job_store
+        self.executor = ProcessPoolExecutor(max_workers=config.max_workers)
 
     def add(self, x: int, y: int) -> Job:
         def _on_complete(fut: Future):
@@ -30,6 +33,6 @@ class TaskProcessor:
             self.job_store.update_job(job.job_id, status=Status.COMPLETE, result=result)
 
         job = self.job_store.add_job()
-        fut = executor.submit(_add, x, y)
+        fut = self.executor.submit(_add, x, y)
         fut.add_done_callback(_on_complete)
         return job

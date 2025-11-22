@@ -1,7 +1,7 @@
 import sys
 import time
 import requests
-from models import (
+from models.models import (
     Status,
     SubmitJobRequest,
     SubmitJobResponse,

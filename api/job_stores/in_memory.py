@@ -1,10 +1,12 @@
 from typing import Dict, Optional
-from models import Job, Status
+from models.models import Job, Status
 from uuid import uuid4
+
+from api.config.job_stores.in_memory import InMemoryJobStoreConfig
 
 
 class InMemoryJobStore:
-    def __init__(self):
+    def __init__(self, _: InMemoryJobStoreConfig):
         self.jobs: Dict[str, Job] = {}
 
     def add_job(self) -> Job:

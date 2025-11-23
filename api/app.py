@@ -27,10 +27,3 @@ class Raijin(tornado.web.Application):
             raise ValueError(
                 "In the interest of simplicity, in memory job store only works with the ThreadTaskProcessor"
             )
-
-        if isinstance(self.job_store, SQLiteJobStore) and not isinstance(
-            self.task_processor, ThreadTaskProcessor
-        ):
-            raise ValueError(
-                "In the interest of simplicity, sqlite job store only works with the ThreadTaskProcessor"
-            )

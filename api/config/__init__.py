@@ -1,11 +1,10 @@
-from concurrent.futures import thread
 from enum import Enum
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from api.config.job_stores import JobStoreConfig, InMemoryJobStoreConfig
 from api.config.task_processors import TaskProcessorConfig
-from api.config.task_processors.thread import ThreadTaskProcessorConfig
+from api.config.task_processors.thread_pool import ThreadPoolTaskProcessorConfig
 
 
 class LogLevelConfig(str, Enum):
@@ -22,7 +21,9 @@ class RaijinConfig(BaseSettings):
         default=LogLevelConfig.INFO, description="Log level for the app"
     )
     task_processor: TaskProcessorConfig = Field(
-        default=TaskProcessorConfig(thread=ThreadTaskProcessorConfig(enabled=True)),
+        default=TaskProcessorConfig(
+            thread_pool=ThreadPoolTaskProcessorConfig(enabled=True)
+        ),
         description="The processor to handle job submissions",
     )
     job_store: JobStoreConfig = Field(

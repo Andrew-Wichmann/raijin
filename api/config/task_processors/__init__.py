@@ -1,6 +1,6 @@
 import typing as T
 from pydantic import BaseModel, model_validator
-from .thread import ThreadTaskProcessorConfig
+from .thread_pool import ThreadPoolTaskProcessorConfig
 from .process_pool import ProcessPoolTaskProcessorConfig
 from .cbb import CBBTaskProcessorConfig
 from .celery import CeleryTaskProcessorConfig
@@ -10,7 +10,7 @@ from .ray import RayTaskProcessorConfig
 
 
 class TaskProcessorConfig(BaseModel):
-    thread: ThreadTaskProcessorConfig | None = None
+    thread_pool: ThreadPoolTaskProcessorConfig | None = None
     process_pool: ProcessPoolTaskProcessorConfig | None = None
     cbb: CBBTaskProcessorConfig | None = None
     celery: CeleryTaskProcessorConfig | None = None
@@ -35,7 +35,7 @@ class TaskProcessorConfig(BaseModel):
     def config(
         self,
     ) -> T.Union[
-        ThreadTaskProcessorConfig,
+        ThreadPoolTaskProcessorConfig,
         ProcessPoolTaskProcessorConfig,
         CBBTaskProcessorConfig,
         CeleryTaskProcessorConfig,

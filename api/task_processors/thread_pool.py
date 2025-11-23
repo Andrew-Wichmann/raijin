@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, Future
 from api.job_stores import JobStoreProtocol
 from models import Status, Job
 import logging
-from api.config.task_processors.thread import ThreadTaskProcessorConfig
+from api.config.task_processors.thread_pool import ThreadPoolTaskProcessorConfig
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +14,10 @@ def _add(x: int, y: int) -> int:
     return x + y
 
 
-class ThreadTaskProcessor:
-    def __init__(self, job_store: JobStoreProtocol, config: ThreadTaskProcessorConfig):
+class ThreadPoolTaskProcessor:
+    def __init__(
+        self, job_store: JobStoreProtocol, config: ThreadPoolTaskProcessorConfig
+    ):
         self.job_store = job_store
         self.executor = ThreadPoolExecutor(max_workers=config.max_workers)
 

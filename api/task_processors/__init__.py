@@ -1,6 +1,7 @@
 from api.job_stores.protocol import JobStoreProtocol
 from api.task_processors.protocol import TaskProcessorProtocol
 from api.task_processors.process_pool import ProcessPoolTaskProcessor
+from api.task_processors.thread import ThreadTaskProcessor
 from api.config.task_processors import TaskProcessorConfig
 from api.config.task_processors.cbb import CBBTaskProcessorConfig
 from api.config.task_processors.celery import CeleryTaskProcessorConfig
@@ -21,7 +22,7 @@ def from_config(
     elif isinstance(config.config, GlueTaskProcessorConfig):
         raise ValueError("Glue task processor not implemented")
     elif isinstance(config.config, ThreadTaskProcessorConfig):
-        raise ValueError("Thread task processor not implemented")
+        return ThreadTaskProcessor(job_store, config.config)
     elif isinstance(config.config, LPipeTaskProcessorConfig):
         raise ValueError("LPipe task processor not implemented")
     elif isinstance(config.config, ProcessPoolTaskProcessorConfig):

@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from api.config.config_base import ConfigBase
 
 
-class LPipeTaskProcessorConfig(BaseModel):
+class LPipeTaskProcessorConfig(ConfigBase):
     pass

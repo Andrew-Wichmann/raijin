@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field
+from api.config.config_base import ConfigBase, Field
 
 
-class ThreadTaskProcessorConfig(BaseModel):
+class ThreadTaskProcessorConfig(ConfigBase):
     max_workers: int | None = Field(
         default=None,
         description="The max number of threads to start that handle tasks",

@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from api.config.config_base import ConfigBase
 
 
-class PostgresStoreConfig(BaseModel):
+class PostgresStoreConfig(ConfigBase):
     pass

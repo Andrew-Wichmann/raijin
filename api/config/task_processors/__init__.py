@@ -20,10 +20,14 @@ class TaskProcessorConfig(BaseModel):
 
     @model_validator(mode="after")
     def one_and_only_one_config(self):
-        stores_configured = [k for k, v in self.model_dump().items() if v is not None]
-        if len(stores_configured) == 0:
+        task_processors_configured = [
+            k
+            for k, v in self.model_dump().items()
+            if v is not None and v.get("enabled", False)
+        ]
+        if len(task_processors_configured) == 0:
             raise ValueError(
-                f"No store configured. Provide a configuration for a {' or '.join(k for k, _ in self.model_dump().items())} store"
+                f"No task processor configured. Provide a configuration for a {' or '.join(k for k, _ in self.model_dump().items())} processor"
             )
         return self
 
@@ -42,6 +46,6 @@ class TaskProcessorConfig(BaseModel):
         # Safe to get first element because one_and_only_one_config ensures there is one config
         for field in self.model_dump():
             value = getattr(self, field)
-            if value is not None:
+            if value is not None and value.enabled:
                 return value
         raise ValueError("Somehow there is no non-empty config")

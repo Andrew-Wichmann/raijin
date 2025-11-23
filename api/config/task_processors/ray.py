@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from api.config.config_base import ConfigBase
 
 
-class RayTaskProcessorConfig(BaseModel):
+class RayTaskProcessorConfig(ConfigBase):
     pass

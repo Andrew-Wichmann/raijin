@@ -2,6 +2,7 @@ import tornado
 import logging
 from api.config import RaijinConfig
 import api.job_stores
+from api.job_stores.sqlite import SQLiteJobStore
 import api.task_processors
 from api.job_stores.in_memory import InMemoryJobStore
 from api.task_processors.thread import ThreadTaskProcessor
@@ -17,9 +18,19 @@ class Raijin(tornado.web.Application):
         self.task_processor = api.task_processors.from_config(
             self.job_store, config.task_processor
         )
+
+        # The in-memory and the SQLite stores only work with the threading processor due
+        # to locking requirements
         if isinstance(self.job_store, InMemoryJobStore) and not isinstance(
             self.task_processor, ThreadTaskProcessor
         ):
             raise ValueError(
                 "In the interest of simplicity, in memory job store only works with the ThreadTaskProcessor"
+            )
+
+        if isinstance(self.job_store, SQLiteJobStore) and not isinstance(
+            self.task_processor, ThreadTaskProcessor
+        ):
+            raise ValueError(
+                "In the interest of simplicity, sqlite job store only works with the ThreadTaskProcessor"
             )

@@ -1,39 +1,18 @@
-from typing import Optional
-from pydantic import BaseModel
-import enum
+from models.requests.check_job import CheckJobRequest
+from models.requests.submit_job import SubmitJobRequest
+from models.responses.check_job import CheckJobResponse
+from models.responses.submit_job import SubmitJobResponse
+from models.responses.error import ErrorResponse
+from models.job import Job
+from models.status import Status
 
 
-class SubmitJobRequest(BaseModel):
-    x: int
-    y: int
-
-
-class ErrorResponse(BaseModel):
-    error: str
-
-
-class SubmitJobResponse(BaseModel):
-    job_id: str
-
-
-class CheckJobRequest(BaseModel):
-    job_id: str
-
-
-class Status(str, enum.Enum):
-    NOT_FOUND = "NOT_FOUND"
-    PENDING = "PENDING"
-    COMPLETE = "COMPLETE"
-    FAILED = "FAILED"
-
-
-class Job(BaseModel):
-    job_id: str
-    status: Status
-    result: Optional[int] = None
-
-
-class CheckJobResponse(BaseModel):
-    job: Job
-    # status: Status
-    # result: Optional[int]
+__all__ = [
+    "CheckJobRequest",
+    "SubmitJobResponse",
+    "SubmitJobRequest",
+    "CheckJobResponse",
+    "ErrorResponse",
+    "Job",
+    "Status",
+]

@@ -36,4 +36,8 @@ class SQLiteJobStore:
         return Job(job_id=res[0], status=res[1], result=res[2])
 
     def update_job(self, job_id: str, status: Status, result: Optional[int] = None):
-        return
+        res = self.conn.execute(
+            f"UPDATE {self.settings.table_name} SET status = ?, result = ? WHERE job_id == ?",
+            (status.value, result, job_id),
+        ).fetchone()
+        return Job(job_id=res[0], status=res[1], result=res[2])

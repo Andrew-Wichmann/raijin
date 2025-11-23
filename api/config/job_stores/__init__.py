@@ -8,7 +8,7 @@ from api.config.job_stores.redis import RedisStoreConfig
 from api.config.job_stores.sqlite import SQLiteJobStoreConfig
 
 
-class StoreConfig(BaseModel):
+class JobStoreConfig(BaseModel):
     in_memory: InMemoryJobStoreConfig | None = None
     sqlite: SQLiteJobStoreConfig | None = None
     postgres: PostgresStoreConfig | None = None

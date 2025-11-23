@@ -1,6 +1,7 @@
 import argparse
 import logging
 import tornado
+import json
 
 from api.app import Raijin
 from api.config import RaijinConfig
@@ -22,6 +23,10 @@ logging.basicConfig(level=config.log_level.value)
 if __name__ == "__main__":
     port = 8888
     logging.info(f"Starting app on http://localhost:{port}")
+
+    # super inappropriate json pretty print if switching to structlog
+    logging.info(f"config: {json.dumps(config.model_dump(), indent=4)}")
+
     app = Raijin(
         config, [(r"/submit_job", SubmitJobHandler), (r"/check_job", CheckJobHandler)]
     )

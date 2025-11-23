@@ -25,10 +25,6 @@ class TaskProcessorConfig(BaseModel):
             raise ValueError(
                 f"No store configured. Provide a configuration for a {' or '.join(k for k, _ in self.model_dump().items())} store"
             )
-        if len(stores_configured) > 1:
-            raise ValueError(
-                f"Ambiguous store configuration. Multiple stores configured. Only one configuration is allowed. Stores configured: {stores_configured}"
-            )
         return self
 
     @property

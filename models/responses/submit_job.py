@@ -1,5 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class SubmitJobResponse(BaseModel):
-    job_id: str
+    job_id: int
+    group_id: Optional[str] = Field(default=None)

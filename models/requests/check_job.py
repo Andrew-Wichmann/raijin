@@ -2,4 +2,4 @@ from pydantic import BaseModel
 
 
 class CheckJobRequest(BaseModel):
-    job_id: str
+    job_id: int

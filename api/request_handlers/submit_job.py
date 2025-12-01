@@ -21,7 +21,7 @@ class SubmitJobHandler(tornado.web.RequestHandler):
             self.write(ErrorResponse(error=str(e)).model_dump_json())
             return
         try:
-            job = self.application.task_processor.add(req.x, req.y)
+            job = self.application.task_processor.radarize(req.cob_date, req.requests)
             self.set_status(200)
             self.set_header("Content-Type", "application/json")
             self.write(SubmitJobResponse(job_id=job.job_id).model_dump_json())

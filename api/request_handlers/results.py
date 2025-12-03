@@ -2,31 +2,31 @@ import tornado
 import logging
 import pydantic
 from models import (
-    SubmitJobRequest,
+    ResultsResponse,
     ErrorResponse,
-    SubmitJobResponse,
+    ResultsRequest,
 )
 from api.app import Raijin
 
 
-class SubmitJobHandler(tornado.web.RequestHandler):
+class ResultsHandler(tornado.web.RequestHandler):
     application: Raijin
 
     async def post(self):
         try:
-            req = SubmitJobRequest.model_validate_json(self.request.body)
+            req = ResultsRequest.model_validate_json(self.request.body)
         except pydantic.ValidationError as e:
             self.set_status(400)
             self.set_header("Content-Type", "application/json")
             self.write(ErrorResponse(error=str(e)).model_dump_json())
             return
         try:
-            job = self.application.task_processor.radarize(req.cob_date, req.requests)
-            self.set_status(200)
+            # TODO: Implement actual results retrieval
+            self.set_status(501)
             self.set_header("Content-Type", "application/json")
-            self.write(SubmitJobResponse(job_id=job.job_id).model_dump_json())
+            self.write(ErrorResponse(error="Not implemented").model_dump_json())
         except Exception as e:
-            logging.exception("Exception in SubmitJobHandler")
-            self.set_header("Content-Type", "application/json")
+            logging.exception("Exception in ResultsHandler")
             self.set_status(500)
+            self.set_header("Content-Type", "application/json")
             self.write(ErrorResponse(error=str(e)).model_dump_json())

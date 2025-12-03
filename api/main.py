@@ -7,6 +7,8 @@ from api.app import Raijin
 from api.config import RaijinConfig
 from api.request_handlers.check_job import CheckJobHandler
 from api.request_handlers.submit_job import SubmitJobHandler
+from api.request_handlers.results import ResultsHandler
+from api.request_handlers.openapi_spec import OpenAPISpecHandler
 
 parser = argparse.ArgumentParser(description="Raijin Web Application")
 parser.add_argument("--env_file", help="A custom env file to use")
@@ -28,7 +30,13 @@ if __name__ == "__main__":
     logging.info(f"config: {json.dumps(config.model_dump(), indent=4)}")
 
     app = Raijin(
-        config, [(r"/submit_job", SubmitJobHandler), (r"/check_job", CheckJobHandler)]
+        config,
+        [
+            (r"/submit_job", SubmitJobHandler),
+            (r"/check_job", CheckJobHandler),
+            (r"/results", ResultsHandler),
+            (r"/openapi.json", OpenAPISpecHandler),
+        ],
     )
     app.listen(port)
     tornado.ioloop.IOLoop.current().start()

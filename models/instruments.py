@@ -1,22 +1,22 @@
 from pydantic import BaseModel, Field
 
 
-class RadarRequest(BaseModel):
+class Instrument(BaseModel):
     identifier: str = Field()
 
 
-class BondRadarRequest(RadarRequest):
+class BondInstrument(Instrument):
     isin: str = Field(description="ISIN id")
     cusip: str = Field(description="CUSIP id")
 
 
-class EquityOptionRadarRequest(RadarRequest):
+class EquityOptionInstrument(Instrument):
     osi: str = Field(description="OSI id")
 
 
-class FutureRadarRequest(RadarRequest):
+class FutureInstrument(Instrument):
     pass
 
 
-class CommodityRadarRequest(RadarRequest):
+class CommodityInstrument(Instrument):
     bbg_id: str = Field(description="Bloomberg id for the commodity")

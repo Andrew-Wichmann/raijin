@@ -1,11 +1,11 @@
 from typing import Optional
 from pydantic import BaseModel, Field
-from models.radar_request import RadarRequest
+from models.instruments import Instrument
 from models.result import Result
 
 
 class Response(BaseModel):
-    request: RadarRequest
+    request: Instrument
     result: Result
 
 

@@ -1,6 +1,6 @@
 from typing import Dict, Optional, List
 from models import Job, Status
-from models.types import job_id, group_id
+from models.ids import job_id, group_id
 from threading import Lock
 
 from api.config.job_stores.in_memory import InMemoryJobStoreConfig

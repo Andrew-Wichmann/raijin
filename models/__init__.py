@@ -1,3 +1,4 @@
+from models.ids import job_id, group_id
 from models.requests.check_job import CheckJobRequest
 from models.requests.submit_job import SubmitJobRequest
 from models.requests.results import ResultsRequest
@@ -7,13 +8,12 @@ from models.responses.results import ResultsResponse
 from models.responses.error import ErrorResponse
 from models.job import Job
 from models.status import Status
-from models.types import job_id, group_id
-from models.radar_request import (
-    RadarRequest,
-    EquityOptionRadarRequest,
-    BondRadarRequest,
-    CommodityRadarRequest,
-    FutureRadarRequest,
+from models.instruments import (
+    Instrument,
+    EquityOptionInstrument,
+    BondInstrument,
+    CommodityInstrument,
+    FutureInstrument,
 )
 from models.radar import Radar
 
@@ -26,11 +26,11 @@ __all__ = [
     "ErrorResponse",
     "Job",
     "Status",
-    "RadarRequest",
-    "EquityOptionRadarRequest",
-    "BondRadarRequest",
-    "CommodityRadarRequest",
-    "FutureRadarRequest",
+    "Instrument",
+    "EquityOptionInstrument",
+    "BondInstrument",
+    "CommodityInstrument",
+    "FutureInstrument",
     "ResultsRequest",
     "ResultsResponse",
     "Radar",

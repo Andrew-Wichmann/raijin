@@ -6,12 +6,12 @@ from models import Status, Job
 import logging
 from api.config.task_processors.thread_pool import ThreadPoolTaskProcessorConfig
 from models.radar import Radar
-from models.radar_request import RadarRequest
+from models.instruments import Instrument
 
 logger = logging.getLogger(__name__)
 
 
-def _radarize(_: RadarRequest) -> List[Radar]:
+def _radarize(_: Instrument) -> List[Radar]:
     import time
 
     time.sleep(11)
@@ -25,14 +25,14 @@ class ThreadPoolTaskProcessor:
         self.job_store = job_store
         self.executor = ThreadPoolExecutor(max_workers=config.max_workers)
 
-    def radarize(self, cob_date: datetime.date, requests: list[RadarRequest]) -> Job:
+    def radarize(self, cob_date: datetime.date, requests: list[Instrument]) -> Job:
         def _on_complete(fut: Future):
             if exception := fut.exception():
                 logging.exception(f"Job failed: {exception}")
                 self.job_store.update_job(job.job_id, status=Status.FAILED)
                 return
             results = fut.result()
-            self.job_store.add_results(results)
+            self.job_store.add_results(job, results)
             self.job_store.update_job(job.job_id, status=Status.COMPLETE)
             logger.info("completed")
 

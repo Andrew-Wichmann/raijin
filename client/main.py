@@ -9,7 +9,7 @@ from models import (
     ErrorResponse,
     CheckJobRequest,
     CheckJobResponse,
-    EquityOptionRadarRequest,
+    EquityOptionInstrument,
     ResultsRequest,
     ResultsResponse,
 )
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     req = SubmitJobRequest(
         cob_date=datetime.date(2025, 1, 1),
         requests=[
-            EquityOptionRadarRequest(identifier="ABC123", osi="XYZ789")
+            EquityOptionInstrument(identifier="ABC123", osi="XYZ789")
             for _ in range(10)
         ],
     )

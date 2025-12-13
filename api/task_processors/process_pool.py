@@ -4,12 +4,12 @@ from api.job_stores import JobStoreProtocol
 from models import Status, Job
 import logging
 from api.config.task_processors.process_pool import ProcessPoolTaskProcessorConfig
-from models.radar_request import RadarRequest
+from models.instruments import Instrument
 
 logger = logging.getLogger(__name__)
 
 
-def _radarize(radar_request: RadarRequest) -> int:
+def _radarize(instruments: Instrument) -> int:
     return 0
 
 
@@ -20,7 +20,7 @@ class ProcessPoolTaskProcessor:
         self.job_store = job_store
         self.executor = ProcessPoolExecutor(max_workers=config.max_workers)
 
-    def radarize(self, cob_date: datetime.date, requests: list[RadarRequest]) -> Job:
+    def radarize(self, cob_date: datetime.date, requests: list[Instrument]) -> Job:
         def _on_complete(fut: Future):
             if exception := fut.exception():
                 logging.exception(f"Job failed: {exception}")

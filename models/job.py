@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 from models.status import Status
-from models.types import job_id, group_id as group_id_type
+from models.ids import job_id, group_id as group_id_type
 
 
 class Job(BaseModel):

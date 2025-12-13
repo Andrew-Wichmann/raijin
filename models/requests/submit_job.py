@@ -1,14 +1,14 @@
 import datetime
 from typing import Optional
 from pydantic import BaseModel, Field
-from models.radar_request import RadarRequest
+from models.instruments import Instrument
 
 
 class SubmitJobRequest(BaseModel):
     cob_date: datetime.date = Field(
         description="The close of business (cob) date to pin market data to to produce radars for"
     )
-    requests: list[RadarRequest] = Field(
+    requests: list[Instrument] = Field(
         description="The instruments to generate radars for"
     )
     group_id: Optional[str] = Field(

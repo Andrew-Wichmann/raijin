@@ -26,5 +26,7 @@ class Raijin(tornado.web.Application):
             raise ValueError(
                 "In the interest of simplicity, in memory job store only works with the ThreadTaskProcessor"
             )
-    
-        self.job_service = JobService(job_store=job_store, task_processor=task_processor)
+
+        self.job_service = JobService(
+            job_store=job_store, task_processor=task_processor
+        )

@@ -1,6 +1,7 @@
 import tornado
 import pydantic
 
+
 class RaijinRequestHandler(tornado.web.RequestHandler):
     def raijin_write(self, response: pydantic.BaseModel, status=200):
         body = response.model_dump_json()

@@ -17,17 +17,15 @@ class ResultsHandler(RaijinRequestHandler):
             elif not job_id and not group_id:
                 raise ValueError("You must provide a job or a group id")
             elif job_id:
-                req = ResultsRequest(job_id=int(job_id))
+                request = ResultsRequest(job_id=int(job_id))
             elif group_id:
-                req = ResultsRequest(group_id=int(group_id))
+                request = ResultsRequest(group_id=int(group_id))
             else:
                 raise ValueError("Logic itself is broken")
 
         except (pydantic.ValidationError, ValueError) as e:
             self.raijin_write(ErrorResponse(error=str(e)), 400)
             return
-        if job_id:
-            self.raijin_write(ResultsResponse(job_id=req.job_id, responses=[Response(instrument=Instrument(identifier="abc123"), result=Result(source="cache SHOULD MAKE THIS AN ENUM", radar="ABC123"))]))
-        if group_id:
-            self.raijin_write(ResultsResponse(group_id=req.group_id, responses=[Response(instrument=Instrument(identifier="abc123"), result=Result(source="cache SHOULD MAKE THIS AN ENUM", radar="ABC123"))]))
-        logging.info(f"{req.model_dump()}")
+
+        response = self.application.job_service.results(request)
+        self.raijin_write(response)

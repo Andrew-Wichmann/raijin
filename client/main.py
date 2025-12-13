@@ -19,6 +19,7 @@ import models
 
 def parse_response(response: requests.Response) -> Any:
     assert 'X-Message-Type' in response.headers, 'The X-Message-Type must be set on the request headers'
+    print(response.content)
     response_model = getattr(models, response.headers['X-Message-Type']).model_validate_json(response.content)
     try:
         response.raise_for_status()

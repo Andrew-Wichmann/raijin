@@ -1,4 +1,3 @@
-import tornado
 import logging
 import pydantic
 from models import (
@@ -15,13 +14,13 @@ class SubmitJobHandler(RaijinRequestHandler):
 
     async def post(self):
         try:
-            req = SubmitJobRequest.model_validate_json(self.request.body)
+            request = SubmitJobRequest.model_validate_json(self.request.body)
         except pydantic.ValidationError as e:
             self.raijin_write(ErrorResponse(error=str(e)), 400)
             return
         try:
-            job = self.application.task_processor.radarize(req.cob_date, req.requests)
-            self.raijin_write(SubmitJobResponse(job_id=job.job_id), 200)
+            response = self.application.job_service.submit_job(request)
+            self.raijin_write(response, 200)
         except Exception as e:
             logging.exception("Exception in SubmitJobHandler")
             self.raijin_write(ErrorResponse(error=str(e)), 500)

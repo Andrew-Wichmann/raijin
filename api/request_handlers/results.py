@@ -1,5 +1,5 @@
 import pydantic
-from models import ResultsRequest, ErrorResponse, ResultsResponse, Response, Instrument, Result
+from models import ResultsRequest, ErrorResponse, ResultsResponse, Response, Instrument
 from api.app import Raijin
 from api.request_handlers.base import RaijinRequestHandler
 
@@ -9,10 +9,12 @@ class ResultsHandler(RaijinRequestHandler):
 
     async def get(self):
         try:
-            job_id = self.get_argument('job_id', default=None)
-            group_id = self.get_argument('group_id', default=None)
+            job_id = self.get_argument("job_id", default=None)
+            group_id = self.get_argument("group_id", default=None)
             if job_id and group_id:
-                raise ValueError("Can not request results from a job and a group. You must provide either a job or a group id")
+                raise ValueError(
+                    "Can not request results from a job and a group. You must provide either a job or a group id"
+                )
             elif not job_id and not group_id:
                 raise ValueError("You must provide a job or a group id")
             elif job_id:

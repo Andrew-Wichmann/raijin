@@ -1,4 +1,3 @@
-import logging
 import pydantic
 from models import ResultsRequest, ErrorResponse, ResultsResponse, Response, Instrument, Result
 from api.app import Raijin

@@ -1,4 +1,3 @@
-import tornado
 import logging
 import pydantic
 from models import (
@@ -7,26 +6,21 @@ from models import (
     CheckJobRequest,
 )
 from api.app import Raijin
+from api.request_handlers.base import RaijinRequestHandler
 
 
-class CheckJobHandler(tornado.web.RequestHandler):
+class CheckJobHandler(RaijinRequestHandler):
     application: Raijin
 
     async def post(self):
         try:
             req = CheckJobRequest.model_validate_json(self.request.body)
         except pydantic.ValidationError as e:
-            self.set_status(400)
-            self.set_header("Content-Type", "application/json")
-            self.write(ErrorResponse(error=str(e)).model_dump_json())
+            self.raijin_write(ErrorResponse(error=str(e)), 500)
             return
         try:
             job = self.application.job_store.get_job(req.job_id)
-            self.set_status(200)
-            self.set_header("Content-Type", "application/json")
-            self.write(CheckJobResponse(job=job, status=job.status).model_dump_json())
+            self.raijin_write(CheckJobResponse(job=job, status=job.status))
         except Exception as e:
             logging.exception("Exception in CheckJobHandler")
-            self.set_status(500)
-            self.set_header("Content-Type", "application/json")
-            self.write(ErrorResponse(error=str(e)).model_dump_json())
+            self.raijin_write(ErrorResponse(error=str(e)), 500)

@@ -15,7 +15,7 @@ def _radarize(_: Instrument) -> List[Radar]:
     import time
 
     time.sleep(11)
-    return [Radar("0123456701234567"), Radar("0123456701234567")]
+    return ["0123456701234567", "0123456701234567"]
 
 
 class ThreadPoolTaskProcessor:

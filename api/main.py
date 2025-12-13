@@ -6,6 +6,7 @@ import json
 from api.app import Raijin
 from api.config import RaijinConfig
 from api.request_handlers.check_job import CheckJobHandler
+from api.request_handlers.not_found import NotFoundHandler
 from api.request_handlers.submit_job import SubmitJobHandler
 from api.request_handlers.results import ResultsHandler
 
@@ -34,6 +35,7 @@ if __name__ == "__main__":
             (r"/submit_job", SubmitJobHandler),
             (r"/check_job", CheckJobHandler),
             (r"/results", ResultsHandler),
+            (r".*", NotFoundHandler),
         ],
     )
     app.listen(port)

@@ -9,7 +9,7 @@ from models.instruments import Instrument
 logger = logging.getLogger(__name__)
 
 
-def _radarize(instruments: Instrument) -> int:
+def _radarize(instrument: Instrument, cob_date: datetime.date) -> int:
     return 0
 
 
@@ -29,10 +29,10 @@ class ProcessPoolTaskProcessor:
 
             logger.info("completed")
             result = fut.result()
-            self.job_store.update_job(job.job_id, status=Status.COMPLETE, result=result)
+            self.job_store.update_job(job.job_id, status=Status.COMPLETE)
 
         job = self.job_store.add_job()
         for req in requests:
-            fut = self.executor.submit(_radarize, req)
+            fut = self.executor.submit(_radarize, req, cob_date)
             fut.add_done_callback(_on_complete)
         return job

@@ -1,5 +1,7 @@
 import sys
 import time
+import pydantic
+from typing import Any
 import requests
 import datetime
 from models import (
@@ -13,6 +15,17 @@ from models import (
     ResultsRequest,
     ResultsResponse,
 )
+import models
+
+def parse_response(response: requests.Response) -> Any:
+    assert 'X-Message-Type' in response.headers, 'The X-Message-Type must be set on the request headers'
+    response_model = getattr(models, response.headers['X-Message-Type']).model_validate_json(response.content)
+    try:
+        response.raise_for_status()
+    except requests.RequestException as e:
+        print(response_model.model_dump_json())
+        raise e
+    return response_model
 
 
 if __name__ == "__main__":
@@ -24,40 +37,20 @@ if __name__ == "__main__":
         ],
     )
     print(f"Submitting job: {req}")
-    resp = requests.post("http://localhost:8888/submit_job", data=req.model_dump_json())
-    try:
-        resp.raise_for_status()
-    except requests.HTTPError:
-        resp = ErrorResponse.model_validate_json(resp.content)
-        print(resp)
-        sys.exit(1)
-    job_id = SubmitJobResponse.model_validate_json(resp.content).job_id
+    submit_job_response: SubmitJobResponse = parse_response(requests.post("http://localhost:8888/submit_job", data=req.model_dump_json()))
+    job_id = submit_job_response.job_id
     for _ in range(30):
         time.sleep(1)
         print(f"Checking job status for job: {job_id}")
-        resp = requests.post(
+        check_resp: CheckJobResponse = parse_response(requests.post(
             "http://localhost:8888/check_job",
             json=CheckJobRequest(job_id=job_id).model_dump(),
-        )
-        try:
-            resp.raise_for_status()
-        except requests.HTTPError:
-            resp = ErrorResponse.model_validate_json(resp.content)
-            print(resp)
-            sys.exit(1)
-        resp = CheckJobResponse.model_validate_json(resp.content)
-        if resp.job.status == Status.COMPLETE:
+        ))
+        if check_resp.job.status == Status.COMPLETE:
             print(f"DONE! {req.cob_date.isoformat()}")
             req = ResultsRequest(job_id=job_id)
-            resp = requests.get("http://localhost:8888/result", json=req.model_dump())
-            try:
-                resp.raise_for_status()
-            except requests.HTTPError:
-                resp = ErrorResponse.model_validate_json(resp.content)
-                print(resp)
-                sys.exit(1)
-            resp = ResultsResponse.model_validate_json(resp.content)
-            print(f"radars: {[r.result for r in resp.responses]}")
+            result_resp: ResultsResponse = parse_response(requests.get("http://localhost:8888/results", params=req.model_dump()))
+            print(f"radars: {[r.result for r in result_resp.responses]}")
             sys.exit(0)
     print("Time out after 30 seconds")
     sys.exit(1)

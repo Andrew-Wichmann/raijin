@@ -1,20 +1,33 @@
-import tornado
-from typing import Optional
 import logging
 import pydantic
-from models import ResultsRequest, ErrorResponse
+from models import ResultsRequest, ErrorResponse, ResultsResponse, Response, Instrument, Result
 from api.app import Raijin
+from api.request_handlers.base import RaijinRequestHandler
 
 
-class ResultsHandler(tornado.web.RequestHandler):
+class ResultsHandler(RaijinRequestHandler):
     application: Raijin
 
-    async def get(self, job_id: Optional[int] = None, group_id: Optional[int] = None):
+    async def get(self):
         try:
-            req = ResultsRequest(job_id=job_id, group_id=group_id)
-        except pydantic.ValidationError as e:
-            self.set_status(400)
-            self.set_header("Content-Type", "application/json")
-            self.write(ErrorResponse(error=str(e)).model_dump_json())
+            job_id = self.get_argument('job_id', default=None)
+            group_id = self.get_argument('group_id', default=None)
+            if job_id and group_id:
+                raise ValueError("Can not request results from a job and a group. You must provide either a job or a group id")
+            elif not job_id and not group_id:
+                raise ValueError("You must provide a job or a group id")
+            elif job_id:
+                req = ResultsRequest(job_id=int(job_id))
+            elif group_id:
+                req = ResultsRequest(group_id=int(group_id))
+            else:
+                raise ValueError("Logic itself is broken")
+
+        except (pydantic.ValidationError, ValueError) as e:
+            self.raijin_write(ErrorResponse(error=str(e)), 400)
             return
+        if job_id:
+            self.raijin_write(ResultsResponse(job_id=req.job_id, responses=[Response(instrument=Instrument(identifier="abc123"), result=Result(source="cache SHOULD MAKE THIS AN ENUM", radar="ABC123"))]))
+        if group_id:
+            self.raijin_write(ResultsResponse(group_id=req.group_id, responses=[Response(instrument=Instrument(identifier="abc123"), result=Result(source="cache SHOULD MAKE THIS AN ENUM", radar="ABC123"))]))
         logging.info(f"{req.model_dump()}")

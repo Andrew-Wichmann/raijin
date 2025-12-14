@@ -12,9 +12,7 @@ from api.config.task_processors.process_pool import ProcessPoolTaskProcessorConf
 from api.config.task_processors.ray import RayTaskProcessorConfig
 
 
-def from_config(
-    job_store: JobStoreProtocol, config: TaskProcessorConfig
-) -> TaskProcessorProtocol:
+def from_config(config: TaskProcessorConfig) -> TaskProcessorProtocol:
     if isinstance(config.config, CBBTaskProcessorConfig):
         raise ValueError("CBB task processor not implemented")
     elif isinstance(config.config, CeleryTaskProcessorConfig):
@@ -22,11 +20,11 @@ def from_config(
     elif isinstance(config.config, GlueTaskProcessorConfig):
         raise ValueError("Glue task processor not implemented")
     elif isinstance(config.config, ThreadPoolTaskProcessorConfig):
-        return ThreadPoolTaskProcessor(job_store, config.config)
+        return ThreadPoolTaskProcessor(config.config)
     elif isinstance(config.config, LPipeTaskProcessorConfig):
         raise ValueError("LPipe task processor not implemented")
     elif isinstance(config.config, ProcessPoolTaskProcessorConfig):
-        return ProcessPoolTaskProcessor(job_store, config.config)
+        return ProcessPoolTaskProcessor(config.config)
     elif isinstance(config.config, RayTaskProcessorConfig):
         raise ValueError("Ray task processor not implemented")
     raise ValueError(f"Unhandled config type: {type(config)}")

@@ -38,7 +38,8 @@ if __name__ == "__main__":
     req = SubmitJobRequest(
         cob_date=datetime.date(2025, 1, 1),
         requests=[
-            EquityOptionInstrument(identifier="ABC123", osi="XYZ789") for _ in range(10)
+            EquityOptionInstrument(identifier="ABC123", osi="XYZ789")
+            for _ in range(100)
         ],
     )
     print(f"Submitting job: {req}")
@@ -61,7 +62,7 @@ if __name__ == "__main__":
             result_resp: ResultsResponse = parse_response(
                 requests.get("http://localhost:8888/results", params=req.model_dump())
             )
-            print(f"radars: {[r.result for r in result_resp.responses]}")
+            print(f"radars: {[r for r in result_resp.responses]}")
             sys.exit(0)
     print("Time out after 30 seconds")
     sys.exit(1)

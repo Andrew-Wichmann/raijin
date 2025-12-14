@@ -15,9 +15,7 @@ class Raijin(tornado.web.Application):
         super().__init__(*args, **kwargs)
         self.config = config
         job_store = api.job_stores.from_config(config.job_store)
-        task_processor = api.task_processors.from_config(
-            job_store, config.task_processor
-        )
+        task_processor = api.task_processors.from_config(config.task_processor)
         # The in-memory and the SQLite stores only work with the threading processor due
         # to locking requirements
         if isinstance(job_store, InMemoryJobStore) and not isinstance(

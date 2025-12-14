@@ -57,10 +57,17 @@ class JobStateMachine:
 
     def error(self, error: str):
         with _safe_transition(self.error):
-            init = self.job.status
-            self.job_store.update_job(job=self.job, status=Status.FAILED, error=error)
-            self.update(self.job, init, self.job.status)
-            return
+            if self.job.status == Status.PENDING:
+                init = self.job.status
+                self.job_store.update_job(
+                    job=self.job, status=Status.FAILED, error=error
+                )
+                self.update(self.job, init, self.job.status)
+                return
+            else:
+                logger.warning(
+                    "Job already in FAILED state. ignoring error transition."
+                )
 
     def cancel(self):
         with _safe_transition(self.error):

@@ -19,11 +19,20 @@ from models.result import Result
 logger = logging.getLogger(__name__)
 
 
-def _radarize(instruments: List[Instrument], cob_date: datetime.date) -> List[Response]:
+def _radarize(
+    instruments: List[Instrument],
+    cob_date: datetime.date,
+    cancel_event: threading.Event,
+) -> List[Response]:
     logger.info(f"Radarizing {len(instruments)} for cob_date {cob_date.isoformat()}")
     responses = []
     for instrument in instruments:
-        time.sleep(1)
+        if cancel_event.is_set():
+            logger.warning("cancel event triggered. Dropping responses and exiting.")
+            return []
+        time.sleep(random.randint(0, 2))
+        if random.randint(0, 100) <= 1:
+            raise Exception("Boom")
         random_radar = "".join([random.choice("01234567") for _ in range(100)])
         responses.append(
             Response(
@@ -47,17 +56,24 @@ class ThreadPoolTaskProcessor:
         on_complete: Callable[[], None],
     ) -> None:
         completed_requests = 0
+        children: list[Future] = []
+        cancel_event = threading.Event()
         lock = threading.Lock()
 
         def _on_task_complete(fut: Future):
-            if exception := fut.exception():
-                logging.exception(f"Child task failed: {exception}")
-                on_error(str(exception))
-                return
-            results = fut.result()
-            on_task_complete(results)
+            nonlocal completed_requests
+            nonlocal children
+            nonlocal cancel_event
             with lock:
-                nonlocal completed_requests
+                if exception := fut.exception():
+                    cancel_event.set()
+                    logging.exception(f"Child task failed: {exception}")
+                    on_error(str(exception))
+                    for child in children:
+                        child.cancel()
+                    return
+                results = fut.result()
+                on_task_complete(results)
                 completed_requests += len(results)
                 logger.info(f"completed {completed_requests}/{len(requests)}")
                 if completed_requests == len(requests):
@@ -65,5 +81,6 @@ class ThreadPoolTaskProcessor:
 
         requests_iter = iter(requests)
         while batch := list(islice(requests_iter, 10)):
-            child = self.executor.submit(_radarize, batch, cob_date)
+            child = self.executor.submit(_radarize, batch, cob_date, cancel_event)
             child.add_done_callback(_on_task_complete)
+            children.append(child)

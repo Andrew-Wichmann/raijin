@@ -19,13 +19,9 @@ import models
 
 
 def parse_response(response: requests.Response) -> Any:
-    assert (
-        "X-Message-Type" in response.headers
-    ), "The X-Message-Type must be set on the request headers"
+    assert "X-Message-Type" in response.headers, "The X-Message-Type must be set on the request headers"
     print(response.content)
-    response_model = getattr(
-        models, response.headers["X-Message-Type"]
-    ).model_validate_json(response.content)
+    response_model = getattr(models, response.headers["X-Message-Type"]).model_validate_json(response.content)
     try:
         response.raise_for_status()
     except requests.RequestException as e:
@@ -37,10 +33,7 @@ def parse_response(response: requests.Response) -> Any:
 if __name__ == "__main__":
     req = SubmitJobRequest(
         cob_date=datetime.date(2025, 1, 1),
-        requests=[
-            EquityOptionInstrument(identifier="ABC123", osi="XYZ789")
-            for _ in range(100)
-        ],
+        requests=[EquityOptionInstrument(identifier="ABC123", osi="XYZ789") for _ in range(100)],
     )
     print(f"Submitting job: {req}")
     submit_job_response: SubmitJobResponse = parse_response(
@@ -56,6 +49,7 @@ if __name__ == "__main__":
                 json=CheckJobRequest(job_id=job_id).model_dump(),
             )
         )
+        print(check_resp)
         if check_resp.job.status == Status.COMPLETE:
             print(f"DONE! {req.cob_date.isoformat()}")
             req = ResultsRequest(job_id=job_id)
@@ -64,5 +58,8 @@ if __name__ == "__main__":
             )
             print(f"radars: {[r for r in result_resp.responses]}")
             sys.exit(0)
+        if check_resp.job.status in (Status.FAILED, Status.CANCELED):
+            print(f"Error!")
+            sys.exit(1)
     print("Time out after 30 seconds")
     sys.exit(1)

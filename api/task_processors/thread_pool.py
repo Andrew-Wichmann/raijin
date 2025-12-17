@@ -1,5 +1,5 @@
 import threading
-from typing import Callable, Iterable, List
+from typing import Callable
 from itertools import islice
 import random
 import time
@@ -20,17 +20,17 @@ logger = logging.getLogger(__name__)
 
 
 def _radarize(
-    instruments: List[Instrument],
+    instruments: list[Instrument],
     cob_date: datetime.date,
     cancel_event: threading.Event,
-) -> List[Response]:
+) -> list[Response]:
     logger.info(f"Radarizing {len(instruments)} for cob_date {cob_date.isoformat()}")
     responses = []
     for instrument in instruments:
         if cancel_event.is_set():
             logger.warning("cancel event triggered. Dropping responses and exiting.")
             return []
-        time.sleep(random.randint(0, 2))
+        time.sleep(random.randint(0, 1))
         if random.randint(0, 100) <= 1:
             raise Exception("Boom")
         random_radar = "".join([random.choice("01234567") for _ in range(100)])
@@ -44,6 +44,8 @@ def _radarize(
 
 
 class ThreadPoolTaskProcessor:
+    BATCH_SIZE = 10
+
     def __init__(self, config: ThreadPoolTaskProcessorConfig):
         self.executor = ThreadPoolExecutor(max_workers=config.max_workers)
 
@@ -56,11 +58,11 @@ class ThreadPoolTaskProcessor:
         on_complete: Callable[[], None],
     ) -> None:
         completed_requests = 0
-        children: list[Future] = []
+        children: list[Future[list[Response]]] = []
         cancel_event = threading.Event()
         lock = threading.Lock()
 
-        def _on_task_complete(fut: Future):
+        def _on_task_complete(fut: Future[list[Response]]):
             nonlocal completed_requests
             nonlocal children
             nonlocal cancel_event
@@ -79,8 +81,7 @@ class ThreadPoolTaskProcessor:
                 if completed_requests == len(requests):
                     on_complete()
 
-        requests_iter = iter(requests)
-        while batch := list(islice(requests_iter, 10)):
-            child = self.executor.submit(_radarize, batch, cob_date, cancel_event)
+        for i in range(0, len(requests), self.BATCH_SIZE):
+            child = self.executor.submit(_radarize, requests[i : i + self.BATCH_SIZE], cob_date, cancel_event)
             child.add_done_callback(_on_task_complete)
             children.append(child)

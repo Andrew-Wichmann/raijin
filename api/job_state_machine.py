@@ -35,9 +35,7 @@ class JobStateMachine:
             if self.job.status == Status.PENDING:
                 self.job_store.update_job(job=self.job, status=Status.RUNNING)
             else:
-                logger.error(
-                    f"Can not transition job from {self.job.status} to {Status.RUNNING}"
-                )
+                logger.error(f"Can not transition job from {self.job.status} to {Status.RUNNING}")
 
     def task_complete(self, responses: list[Response]):
         with _safe_transition(self.error):
@@ -51,23 +49,14 @@ class JobStateMachine:
                 self.update(self.job, init, self.job.status)
                 return
             else:
-                logger.error(
-                    f"Can not transition job from {self.job.status} to {Status.COMPLETE} without a force"
-                )
+                logger.error(f"Can not transition job from {self.job.status} to {Status.COMPLETE} without a force")
 
     def error(self, error: str):
         with _safe_transition(self.error):
-            if self.job.status == Status.PENDING:
-                init = self.job.status
-                self.job_store.update_job(
-                    job=self.job, status=Status.FAILED, error=error
-                )
-                self.update(self.job, init, self.job.status)
-                return
-            else:
-                logger.warning(
-                    "Job already in FAILED state. ignoring error transition."
-                )
+            init = self.job.status
+            self.job_store.update_job(job=self.job, status=Status.FAILED, error=error)
+            self.update(self.job, init, self.job.status)
+            return
 
     def cancel(self):
         with _safe_transition(self.error):
@@ -77,9 +66,7 @@ class JobStateMachine:
                 self.update(self.job, init, self.job.status)
                 return
             else:
-                logger.error(
-                    f"Can not transition job from {self.job.status} to {Status.CANCELED}"
-                )
+                logger.error(f"Can not transition job from {self.job.status} to {Status.CANCELED}")
 
     def restart(self):
         with _safe_transition(self.error):
@@ -94,6 +81,4 @@ class JobStateMachine:
                 self.update(self.job, init, self.job.status)
                 return
             else:
-                logger.error(
-                    f"Can not transition job from {self.job.status} to {Status.CANCELED}"
-                )
+                logger.error(f"Can not transition job from {self.job.status} to {Status.CANCELED}")

@@ -6,9 +6,7 @@ from api.task_processors.protocol import TaskProcessorProtocol
 from models import (
     CheckJobResponse,
     SubmitJobRequest,
-    ResultsResponse,
-    ResultsRequest,
-    Response,
+    Result,
     Job,
 )
 from models.responses.submit_job import SubmitJobResponse
@@ -48,8 +46,8 @@ class JobService:
         job = self.job_store.get_job(job_id)
         return CheckJobResponse(job=job, status=job.status)
 
-    def results_by_group(self, group_id: group_id) -> list[Response]:
+    def results_by_group(self, group_id: group_id) -> list[Result]:
         return self.job_store.get_results_by_group_id(group_id)
 
-    def results_by_job(self, job_id: job_id) -> list[Response]:
+    def results_by_job(self, job_id: job_id) -> list[Result]:
         return self.job_store.get_results_by_job_id(job_id)

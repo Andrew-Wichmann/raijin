@@ -3,7 +3,7 @@ from models.requests.submit_job import SubmitJobRequest
 from models.requests.results import ResultsRequest
 from models.responses.check_job import CheckJobResponse
 from models.responses.submit_job import SubmitJobResponse
-from models.responses.results import ResultsResponse, Response, Result
+from models.responses.results import ResultsResponse, Result
 from models.responses.error import ErrorResponse
 from models.job import Job
 from models.status import Status
@@ -24,7 +24,6 @@ __all__ = [
     "ErrorResponse",
     "Job",
     "Status",
-    "Response",
     "Result",
     "Instrument",
     "EquityOptionInstrument",

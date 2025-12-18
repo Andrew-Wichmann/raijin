@@ -13,7 +13,6 @@ from models.radar import Radar
 from models.instruments import Instrument
 from models.radar_source import RadarSource
 from models.responses.error import ErrorResponse
-from models.responses.results import Response
 from models.result import Result
 
 logger = logging.getLogger(__name__)
@@ -23,7 +22,7 @@ def _radarize(
     instruments: list[Instrument],
     cob_date: datetime.date,
     cancel_event: threading.Event,
-) -> list[Response]:
+) -> list[Result]:
     logger.info(f"Radarizing {len(instruments)} for cob_date {cob_date.isoformat()}")
     responses = []
     for instrument in instruments:
@@ -34,12 +33,7 @@ def _radarize(
         # if random.randint(0, 100) <= 1:
         #    raise Exception("Boom")
         random_radar = "".join([random.choice("01234567") for _ in range(100)])
-        responses.append(
-            Response(
-                instrument=instrument,
-                result=Result(source=RadarSource.BUILT, radar=random_radar),
-            )
-        )
+        responses.append(Result(instrument=instrument, source=RadarSource.BUILT, radar=random_radar))
     return responses
 
 
@@ -53,16 +47,16 @@ class ThreadPoolTaskProcessor:
         self,
         cob_date: datetime.date,
         requests: list[Instrument],
-        on_task_complete: Callable[[list[Response]], None],
+        on_task_complete: Callable[[list[Result]], None],
         on_error: Callable[[str], None],
         on_complete: Callable[[], None],
     ) -> None:
         completed_requests = 0
-        children: list[Future[list[Response]]] = []
+        children: list[Future[list[Result]]] = []
         cancel_event = threading.Event()
         lock = threading.Lock()
 
-        def _on_task_complete(fut: Future[list[Response]]):
+        def _on_task_complete(fut: Future[list[Result]]):
             nonlocal completed_requests
             nonlocal children
             nonlocal cancel_event

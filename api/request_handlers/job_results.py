@@ -12,8 +12,8 @@ class JobResultsHandler(RaijinRequestHandler):
     async def get(self, job_id):
         try:
             job_id = int(job_id)
-            responses = self.application.job_service.results_by_job(job_id)
-            self.raijin_write(ResultsResponse(job_id=job_id, responses=responses))
+            results = self.application.job_service.results_by_job(job_id)
+            self.raijin_write(ResultsResponse(job_id=job_id, results=results))
         except Exception as e:
             logging.exception("Exception in JobResultsHandler")
             self.raijin_write(ErrorResponse(error=str(e)), 500)

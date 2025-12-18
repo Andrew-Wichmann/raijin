@@ -1,11 +1,12 @@
 import datetime
 from concurrent.futures import ProcessPoolExecutor, Future
 from api.job_stores import JobStoreProtocol
-from models import Status, Job, Response
+from models import Status, Job, Result
 import logging
 from api.config.task_processors.process_pool import ProcessPoolTaskProcessorConfig
 from models.instruments import Instrument
-from typing import Callable, Iterable
+from typing import Callable
+
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ class ProcessPoolTaskProcessor:
         self,
         cob_date: datetime.date,
         requests: list[Instrument],
-        on_task_complete: Callable[[list[Response]], None],
+        on_task_complete: Callable[[list[Result]], None],
         on_error: Callable[[str], None],
         on_complete: Callable[[], None],
     ) -> None:

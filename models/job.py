@@ -9,3 +9,4 @@ class Job(BaseModel):
     job_id: job_id
     group_id: Optional[group_id_type] = None
     status: Status
+    error_message: Optional[str] = None

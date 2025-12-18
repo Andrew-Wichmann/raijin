@@ -47,7 +47,7 @@ if __name__ == "__main__":
         if check_resp.job.status == Status.COMPLETE:
             print(f"DONE! {req.cob_date.isoformat()}")
             result_resp: ResultsResponse = parse_response(requests.get(f"http://localhost:8888/jobs/{job_id}/results"))
-            print(f"radars: {[r for r in result_resp.responses]}")
+            print(f"radars: {[r for r in result_resp.results]}")
             sys.exit(0)
         if check_resp.job.status in (Status.FAILED, Status.CANCELED):
             print(f"Error!")

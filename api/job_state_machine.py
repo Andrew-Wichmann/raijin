@@ -2,7 +2,6 @@ from contextlib import contextmanager
 from typing import Callable
 from api.job_stores.protocol import JobStoreProtocol
 from models import Job
-from models.responses.results import Response
 from models.result import Result
 from models.status import Status
 import logging
@@ -37,9 +36,9 @@ class JobStateMachine:
             else:
                 logger.error(f"Can not transition job from {self.job.status} to {Status.RUNNING}")
 
-    def task_complete(self, responses: list[Response]):
+    def task_complete(self, results: list[Result]):
         with _safe_transition(self.error):
-            self.job_store.add_results(job=self.job, responses=responses)
+            self.job_store.add_results(job=self.job, results=results)
 
     def complete(self, force=False):
         with _safe_transition(self.error):

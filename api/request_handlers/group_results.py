@@ -12,7 +12,7 @@ class GroupResultsHandler(RaijinRequestHandler):
         try:
             group_id = int(group_id)
             response = self.application.job_service.results_by_group(group_id)
-            self.raijin_write(ResultsResponse(group_id=group_id, responses=response))
+            self.raijin_write(ResultsResponse(group_id=group_id, results=response))
         except Exception as e:
             logging.exception("Exception in GroupResultsHandler")
             self.raijin_write(ErrorResponse(error=str(e)), 500)

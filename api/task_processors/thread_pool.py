@@ -31,8 +31,8 @@ def _radarize(
             logger.warning("cancel event triggered. Dropping responses and exiting.")
             return []
         time.sleep(random.randint(0, 1))
-        if random.randint(0, 100) <= 1:
-            raise Exception("Boom")
+        # if random.randint(0, 100) <= 1:
+        #    raise Exception("Boom")
         random_radar = "".join([random.choice("01234567") for _ in range(100)])
         responses.append(
             Response(

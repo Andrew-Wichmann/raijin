@@ -9,7 +9,6 @@ from models import (
     SubmitJobRequest,
     SubmitJobResponse,
     ErrorResponse,
-    CheckJobRequest,
     CheckJobResponse,
     EquityOptionInstrument,
     ResultsRequest,
@@ -37,25 +36,17 @@ if __name__ == "__main__":
     )
     print(f"Submitting job: {req}")
     submit_job_response: SubmitJobResponse = parse_response(
-        requests.post("http://localhost:8888/submit_job", data=req.model_dump_json())
+        requests.post("http://localhost:8888/jobs", data=req.model_dump_json())
     )
     job_id = submit_job_response.job_id
     for _ in range(30):
         time.sleep(1)
         print(f"Checking job status for job: {job_id}")
-        check_resp: CheckJobResponse = parse_response(
-            requests.post(
-                "http://localhost:8888/check_job",
-                json=CheckJobRequest(job_id=job_id).model_dump(),
-            )
-        )
+        check_resp: CheckJobResponse = parse_response(requests.get(f"http://localhost:8888/jobs/{job_id}"))
         print(check_resp)
         if check_resp.job.status == Status.COMPLETE:
             print(f"DONE! {req.cob_date.isoformat()}")
-            req = ResultsRequest(job_id=job_id)
-            result_resp: ResultsResponse = parse_response(
-                requests.get("http://localhost:8888/results", params=req.model_dump())
-            )
+            result_resp: ResultsResponse = parse_response(requests.get(f"http://localhost:8888/jobs/{job_id}/results"))
             print(f"radars: {[r for r in result_resp.responses]}")
             sys.exit(0)
         if check_resp.job.status in (Status.FAILED, Status.CANCELED):

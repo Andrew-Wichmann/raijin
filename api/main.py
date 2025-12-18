@@ -8,7 +8,9 @@ from api.config import RaijinConfig
 from api.request_handlers.check_job import CheckJobHandler
 from api.request_handlers.not_found import NotFoundHandler
 from api.request_handlers.submit_job import SubmitJobHandler
-from api.request_handlers.results import ResultsHandler
+from api.request_handlers.job_results import JobResultsHandler
+from api.request_handlers.group_results import GroupResultsHandler
+from api.request_handlers.groups import GroupsHandler
 
 parser = argparse.ArgumentParser(description="Raijin Web Application")
 parser.add_argument("--env_file", help="A custom env file to use")
@@ -32,9 +34,11 @@ if __name__ == "__main__":
     app = Raijin(
         config,
         [
-            (r"/submit_job", SubmitJobHandler),
-            (r"/check_job", CheckJobHandler),
-            (r"/results", ResultsHandler),
+            (r"/jobs", SubmitJobHandler),
+            (r"/jobs/([0-9]+)", CheckJobHandler),
+            (r"/jobs/([0-9]+)/results", JobResultsHandler),
+            (r"/groups/([0-9]+)", GroupsHandler),
+            (r"/groups/([0-9]+)/results", GroupResultsHandler),
             (r".*", NotFoundHandler),
         ],
     )
